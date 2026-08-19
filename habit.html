@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Habit Atelier</title>
+    <style>
+      :root {
+        --bg: #f5efe6;
+        --panel: #f8f4ee;
+        --panel-strong: #efe5d4;
+        --card: rgba(255, 255, 255, 0.35);
+        --line: rgba(48, 36, 23, 0.15);
+        --text: #2b241f;
+        --muted: #6d5d50;
+        --accent: #7d5a3d;
+        --accent-soft: #d8b98f;
+        --green: #485a46;
+        --green-soft: #c9d5c3;
+        --gold: #be9c5d;
+        --shadow: 0 24px 60px rgba(58, 39, 22, 0.12);
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        background: linear-gradient(180deg, #f7f1e8 0%, #efe7db 100%);
+        color: var(--text);
+        font-family: "Segoe UI", Tahoma, sans-serif;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        padding: 48px 20px;
+      }
+
+      .page {
+        width: min(1180px, 100%);
+        background: rgba(255,255,255,0.18);
+        border: 1px solid var(--line);
+        border-radius: 30px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        backdrop-filter: blur(6px);
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 26px 44px 20px;
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .brand-mark {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 30%, #f0d3a1, #a67b52 60%, #664b33 100%);
+        border: 1px solid rgba(50, 35, 26, 0.18);
+        box-shadow: inset 0 0 0 4px rgba(255,255,255,0.38);
+      }
+
+      .brand-text {
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        font-size: 0.74rem;
+        color: var(--muted);
+      }
+
+      .nav {
+        display: flex;
+        gap: 26px;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      .nav a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .nav a.active {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      .nav .pill {
+        padding: 10px 14px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255,255,255,0.2);
+      }
+
+      .content {
+        padding: 26px 44px 44px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.8fr 1fr;
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      .hero-card,
+      .side-card,
+      .habit-card,
+      .summary-card {
+        background: linear-gradient(180deg, rgba(255,255,255,0.38), rgba(255,255,255,0.15));
+        border: 1px solid var(--line);
+        border-radius: 24px;
+      }
+
+      .hero-card {
+        padding: 30px 30px 22px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-card::before {
+        content: "";
+        position: absolute;
+        right: -65px;
+        top: -50px;
+        width: 240px;
+        height: 240px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(192, 162, 116, 0.28), rgba(192, 162, 116, 0));
+      }
+
+      .eyebrow {
+        display: inline-block;
+        font-size: 0.76rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--gold);
+        font-weight: 700;
+      }
+
+      h1 {
+        margin: 18px 0 10px;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(2.6rem, 5vw, 4.5rem);
+        line-height: 0.96;
+        letter-spacing: -0.06em;
+        font-weight: 600;
+      }
+
+      .hero-copy {
+        max-width: 550px;
+        color: var(--muted);
+        font-size: 1.02rem;
+        line-height: 1.65;
+      }
+
+      .hero-actions {
+        display: flex;
+        gap: 14px;
+        margin-top: 26px;
+        align-items: center;
+      }
+
+      .button {
+        appearance: none;
+        border: none;
+        border-radius: 999px;
+        padding: 14px 20px;
+        cursor: pointer;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+      }
+
+      .button.primary {
+        background: var(--text);
+        color: #fffaf3;
+        box-shadow: 0 10px 22px rgba(43, 36, 31, 0.15);
+      }
+
+      .button.secondary {
+        background: rgba(255,255,255,0.3);
+        color: var(--text);
+        border: 1px solid var(--line);
+      }
+
+      .side-card {
+        padding: 26px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .day-label {
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        font-size: 0.72rem;
+      }
+
+      .date {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 2.4rem;
+        margin: 10px 0 20px;
+      }
+
+      .mini-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(120px,1fr));
+        gap: 18px;
+      }
+
+      .stat-box {
+        padding: 18px 16px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.24);
+        border: 1px solid var(--line);
+      }
+
+      .stat-box strong {
+        display: block;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 2rem;
+        margin-bottom: 6px;
+      }
+
+      .stat-box span {
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .stats-row {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(180px, 1fr));
+        gap: 18px;
+        margin-top: 24px;
+      }
+
+      .summary-card {
+        padding: 22px 22px 18px;
+      }
+
+      .summary-card small {
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+      }
+
+      .summary-card strong {
+        display: block;
+        margin-top: 14px;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(2rem, 3vw, 3rem);
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 34px 0 18px;
+      }
+
+      .section-title h2 {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(2rem, 3vw, 2.7rem);
+        font-weight: 600;
+        letter-spacing: -0.04em;
+      }
+
+      .section-title .meta {
+        color: var(--muted);
+        font-size: 0.82rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .dashboard {
+        display: grid;
+        grid-template-columns: 1.6fr 0.9fr;
+        gap: 24px;
+      }
+
+      .habit-list {
+        display: grid;
+        gap: 16px;
+      }
+
+      .habit-card {
+        padding: 18px 18px 16px;
+        display: grid;
+        grid-template-columns: 54px 1.4fr 110px auto;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .habit-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 16px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, #e1d4c1, #f7efe4);
+        border: 1px solid rgba(86, 60, 38, 0.12);
+        font-size: 1.5rem;
+      }
+
+      .habit-info h3 {
+        margin: 0 0 4px;
+        font-size: 1.15rem;
+      }
+
+      .habit-info p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      .progress-box {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .progress-track {
+        width: 100%;
+        height: 8px;
+        background: rgba(70, 52, 40, 0.1);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+
+      .progress-bar {
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--green), var(--accent-soft));
+      }
+
+      .completion {
+        min-width: 42px;
+        text-align: right;
+        font-weight: 700;
+        color: var(--green);
+      }
+
+      .check-toggle {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1px solid rgba(43, 36, 31, 0.22);
+        background: rgba(255,255,255,0.3);
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .check-toggle::before {
+        content: "";
+        width: 12px;
+        height: 12px;
+        border: 2px solid var(--text);
+        border-radius: 50%;
+        opacity: 0.3;
+      }
+
+      .habit-card.done .check-toggle {
+        background: var(--green);
+        border-color: var(--green);
+      }
+
+      .habit-card.done .check-toggle::before {
+        content: "✓";
+        width: auto;
+        height: auto;
+        border: none;
+        opacity: 1;
+        color: white;
+        font-weight: bold;
+        font-size: 1rem;
+      }
+
+      .habit-card.done .habit-info h3 {
+        text-decoration: line-through;
+        color: var(--muted);
+      }
+
+      .habit-card.done .progress-bar {
+        background: linear-gradient(90deg, #7c8b76, #a5b49e);
+      }
+
+      .side-stack {
+        display: grid;
+        gap: 18px;
+      }
+
+      .panel {
+        padding: 22px 18px;
+      }
+
+      .panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+      }
+
+      .panel-header h3 {
+        margin: 0;
+        font-size: 1.1rem;
+      }
+
+      .chip {
+        font-size: 0.72rem;
+        background: rgba(125, 90, 61, 0.1);
+        color: var(--accent);
+        padding: 8px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(125, 90, 61, 0.16);
+      }
+
+      .calendar {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .day {
+        aspect-ratio: 1;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        background: rgba(255,255,255,0.18);
+        border: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+
+      .day.active {
+        background: var(--green);
+        color: #fff;
+        border-color: var(--green);
+      }
+
+      .daily-note {
+        background: linear-gradient(180deg, rgba(199, 180, 146, 0.12), rgba(255,255,255,0.2));
+        border: 1px solid rgba(125, 90, 61, 0.18);
+        border-radius: 16px;
+        padding: 18px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .quote {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 1.3rem;
+        color: var(--text);
+        margin: 0 0 10px;
+      }
+
+      @media (max-width: 980px) {
+        .hero, .dashboard {
+          grid-template-columns: 1fr;
+        }
+
+        .stats-row {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 640px) {
+        body {
+          padding: 24px 12px;
+        }
+
+        .topbar,
+        .content {
+          padding-left: 18px;
+          padding-right: 18px;
+        }
+
+        .topbar {
+          flex-direction: column;
+          gap: 16px;
+          align-items: flex-start;
+        }
+
+        .nav {
+          flex-wrap: wrap;
+          gap: 12px;
+        }
+
+        .habit-card {
+          grid-template-columns: 54px 1fr;
+        }
+
+        .progress-box,
+        .check-toggle {
+          grid-column: 1 / -1;
+        }
+
+        .progress-box {
+          margin-left: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark"></div>
+          <div class="brand-text">Habit Atelier</div>
+        </div>
+
+        <nav class="nav" aria-label="Main navigation">
+          <a href="#" class="active">Today</a>
+          <a href="#">Week</a>
+          <a href="#">Goals</a>
+          <a href="#">Journal</a>
+          <a href="#" class="pill">Progress</a>
+        </nav>
+      </header>
+
+      <main class="content">
+        <section class="hero">
+          <div class="hero-card">
+            <div class="eyebrow">Daily ritual</div>
+            <h1>Build a life worth repeating.</h1>
+            <p class="hero-copy">
+              A gentle system for your morning focus, thoughtful movement, and the kind of consistency that quietly changes everything.
+            </p>
+
+            <div class="hero-actions">
+              <button class="button primary">Review today</button>
+              <button class="button secondary">Plan tomorrow</button>
+            </div>
+          </div>
+
+          <aside class="side-card">
+            <div>
+              <div class="day-label">Wednesday</div>
+              <div class="date">21</div>
+            </div>
+
+            <div class="mini-grid">
+              <div class="stat-box">
+                <strong>12</strong>
+                <span>day streak</span>
+              </div>
+              <div class="stat-box">
+                <strong>87%</strong>
+                <span>done</span>
+              </div>
+            </div>
+          </aside>
+        </section>
+
+        <section class="stats-row" aria-label="Overview stats">
+          <div class="summary-card">
+            <small>Focus time</small>
+            <strong>2h 40m</strong>
+          </div>
+          <div class="summary-card">
+            <small>Wellness</small>
+            <strong>4 / 5</strong>
+          </div>
+          <div class="summary-card">
+            <small>Momentum</small>
+            <strong>+18%</strong>
+          </div>
+        </section>
+
+        <div class="section-title">
+          <h2>Today's habits</h2>
+          <div class="meta">4 rituals</div>
+        </div>
+
+        <section class="dashboard">
+          <div class="habit-list" id="habitList">
+            <article class="habit-card" data-progress="80">
+              <div class="habit-icon">✦</div>
+              <div class="habit-info">
+                <h3>Morning journaling</h3>
+                <p>15 minutes of reflection and intention</p>
+              </div>
+              <div class="progress-box">
+                <div class="progress-track">
+                  <div class="progress-bar" style="width: 80%"></div>
+                </div>
+                <div class="completion">80%</div>
+              </div>
+              <button class="check-toggle" aria-label="Complete morning journaling"></button>
+            </article>
+
+            <article class="habit-card done" data-progress="100">
+              <div class="habit-icon">◌</div>
+              <div class="habit-info">
+                <h3>Deep work session</h3>
+                <p>2 focus blocks with no distractions</p>
+              </div>
+              <div class="progress-box">
+                <div class="progress-track">
+                  <div class="progress-bar" style="width: 100%"></div>
+                </div>
+                <div class="completion">100%</div>
+              </div>
+              <button class="check-toggle" aria-label="Complete deep work session"></button>
+            </article>
+
+            <article class="habit-card" data-progress="60">
+              <div class="habit-icon">↗</div>
+              <div class="habit-info">
+                <h3>Walk outside</h3>
+                <p>30 minute reset for fresh air</p>
+              </div>
+              <div class="progress-box">
+                <div class="progress-track">
+                  <div class="progress-bar" style="width: 60%"></div>
+                </div>
+                <div class="completion">60%</div>
+              </div>
+              <button class="check-toggle" aria-label="Complete walk outside"></button>
+            </article>
+
+            <article class="habit-card done" data-progress="100">
+              <div class="habit-icon">☾</div>
+              <div class="habit-info">
+                <h3>Evening read</h3>
+                <p>20 pages before bed</p>
+              </div>
+              <div class="progress-box">
+                <div class="progress-track">
+                  <div class="progress-bar" style="width: 100%"></div>
+                </div>
+                <div class="completion">100%</div>
+              </div>
+              <button class="check-toggle" aria-label="Complete evening read"></button>
+            </article>
+          </div>
+
+          <aside class="side-stack">
+            <div class="summary-card panel">
+              <div class="panel-header">
+                <h3>Week view</h3>
+                <span class="chip">5/7</span>
+              </div>
+
+              <div class="calendar" aria-label="Weekly calendar">
+                <div class="day">M</div>
+                <div class="day">T</div>
+                <div class="day">W</div>
+                <div class="day">T</div>
+                <div class="day active">F</div>
+                <div class="day">S</div>
+                <div class="day">S</div>
+              </div>
+            </div>
+
+            <div class="summary-card panel">
+              <div class="panel-header">
+                <h3>Reflection</h3>
+              </div>
+
+              <div class="daily-note">
+                <p class="quote">“Consistency is the quiet luxury of a meaningful life.”</p>
+                Your habits are steady, and today’s calm focus is building the rhythm you want for next week.
+              </div>
+            </div>
+          </aside>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const cards = document.querySelectorAll('.habit-card');
+
+      cards.forEach(card => {
+        const toggle = card.querySelector('.check-toggle');
+        const bar = card.querySelector('.progress-bar');
+        const completion = card.querySelector('.completion');
+
+        toggle.addEventListener('click', () => {
+          const done = card.classList.toggle('done');
+          const progress = done ? 100 : 60;
+          bar.style.width = progress + '%';
+          completion.textContent = progress + '%';
+        });
+      });
+    </script>
+  </body>
+</html>
